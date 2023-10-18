@@ -132,5 +132,6 @@ fig2.update_layout(xaxis=dict(range=[0, max_x+5000]))
 fig2.update_layout(yaxis=dict(range=[0, max_y+5000]))
 
 st.subheader('Kommunal låneskuld samt investeringar per capita efter typ av kommun efter SKRs kommunindelning ')
+st.write('Falkenberg är i SKRs kommungrupp "mindre stad/tätort"')
 st.plotly_chart(fig2)
 
