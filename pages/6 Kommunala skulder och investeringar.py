@@ -51,7 +51,7 @@ fig_histo = px.histogram(df_histo,
                          ) 
 
 fig_histo.update_layout(barmode='overlay', bargap=0.1)
-fig_histo.update_traces(opacity=0.3)  # To make bars slightly transparent
+fig_histo.update_traces(opacity=0.8)  # To make bars slightly transparent
 fig_histo.update_layout(showlegend=False)
 
 fig_histo.for_each_trace(lambda t: t.update(marker=dict(line=dict(color='darkslategray', width=2))))
@@ -82,7 +82,7 @@ fig_fbg = px.scatter(filtered_df,
                  range_y=[0, filtered_df['investeringar_per_capita'].max()-30000],
                  text='label',  # Use the 'label' column for text
                  size_max=55)
-fig_fbg.update_traces(marker=dict(opacity=0.4))
+fig_fbg.update_traces(marker=dict(opacity=0.8))
 
 st.subheader('Kommuner efter skuld per invånare (x-axel) samt investeringar per invånare (y-axel), animerat per år')
 st.plotly_chart(fig_fbg)
