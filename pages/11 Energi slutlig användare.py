@@ -126,7 +126,9 @@ fig = go.Figure(data=[go.Sankey(
         value=value,
         # color='rgba(1, 75, 255, 0.4)',
         
-    ))])
+    ),
+    arrangement='freeform'
+    )])
 
 fig.update_layout(
     margin=dict(t=100, b=100, l=0, r=100),
