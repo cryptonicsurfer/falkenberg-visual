@@ -1,0 +1,7 @@
+pandas
+plotly.express
+google.cloud
+google.oauth2
+streamlit
+json
+plotly

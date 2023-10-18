@@ -1,0 +1,62 @@
+aggrnyl     agsunset    blackbody   bluered     blues       blugrn      bluyl       brwnyl
+bugn        bupu        burg        burgyl      cividis     darkmint    electric    emrld
+gnbu        greens      greys       hot         inferno     jet         magenta     magma
+mint        orrd        oranges     oryel       peach       pinkyl      plasma      plotly3
+pubu        pubugn      purd        purp        purples     purpor      rainbow     rdbu
+rdpu        redor       reds        sunset      sunsetdark  teal        tealgrn     turbo
+viridis     ylgn        ylgnbu      ylorbr      ylorrd      algae       amp         deep
+dense       gray        haline      ice         matter      solar       speed       tempo
+thermal     turbid      armyrose    brbg        earth       fall        geyser      prgn
+piyg        picnic      portland    puor        rdgy        rdylbu      rdylgn      spectral
+tealrose    temps       tropic      balance     curl        delta       oxy         edge
+hsv         icefire     phase       twilight    mrybm       mygbm
+
+
+
+
+#
+['aggrnyl', 'agsunset', 'algae', 'amp', 'armyrose', 
+'balance', 'blackbody', 'bluered', 'blues', 'blugrn', 
+'bluyl', 'brbg', 'brwnyl', 'bugn', 'bupu', 'burg', 
+'burgyl', 'cividis', 'curl', 'darkmint', 'deep', 
+'delta', 'dense', 'earth', 'edge', 'electric', 
+'emrld', 'fall', 'geyser', 'gnbu', 'gray', 'greens', 
+'greys', 'haline', 'hot', 'hsv', 'ice', 'icefire', 
+'inferno', 'jet', 'magenta', 'magma', 'matter', 
+'mint', 'mrybm', 'mygbm', 'oranges', 'orrd', 'oryel', 
+'oxy', 'peach', 'phase', 'picnic', 'pinkyl', 'piyg', 
+'plasma', 'plotly3', 'portland', 'prgn', 'pubu', 'pubugn', 
+'puor', 'purd', 'purp', 'purples', 'purpor', 'rainbow', 
+'rdbu', 'rdgy', 'rdpu', 'rdylbu', 'rdylgn', 'redor', 
+'reds', 'solar', 'spectral', 'speed', 'sunset', 'sunsetdark', 
+'teal', 'tealgrn', 'tealrose', 'tempo', 'temps', 'thermal', 
+''tropic', 'turbid', 'turbo', 'twilight', 'viridis', 
+'ylgn', 'ylgnbu', 'ylorbr', 'ylorrd']. 
+Appending '_r' to a named colorscale reverses it.
+
+
+
+colors for lines:
+
+A named CSS color: 
+aliceblue, antiquewhite, aqua, aquamarine, azure, beige, bisque, 
+black, blanchedalmond, blue, blueviolet, brown, burlywood, cadetblue, 
+chartreuse, chocolate, coral, cornflowerblue, cornsilk, crimson, cyan, 
+darkblue, darkcyan, darkgoldenrod, darkgray, darkgrey, darkgreen, darkkhaki, 
+darkmagenta, darkolivegreen, darkorange, darkorchid, darkred, darksalmon, darkseagreen, 
+darkslateblue, darkslategray, darkslategrey, darkturquoise, darkviolet, 
+deeppink, deepskyblue, dimgray, dimgrey, dodgerblue, firebrick, floralwhite, 
+forestgreen, fuchsia, gainsboro, ghostwhite, gold, goldenrod, gray, grey, green, 
+greenyellow, honeydew, hotpink, indianred, indigo, ivory, khaki, lavender, 
+lavenderblush, lawngreen, lemonchiffon, lightblue, lightcoral, lightcyan, 
+lightgoldenrodyellow, lightgray, lightgrey, lightgreen, lightpink, lightsalmon, 
+lightseagreen, lightskyblue, lightslategray, lightslategrey, lightsteelblue, lightyellow, 
+lime, limegreen, linen, magenta, maroon, mediumaquamarine, mediumblue, mediumorchid, 
+mediumpurple, mediumseagreen, mediumslateblue, mediumspringgreen, mediumturquoise, 
+mediumvioletred, midnightblue, mintcream, mistyrose, moccasin, navajowhite, navy, 
+oldlace, olive, olivedrab, orange, orangered, orchid, palegoldenrod, palegreen, 
+paleturquoise, palevioletred, papayawhip, peachpuff, peru, pink, plum, 
+powderblue, purple, red, rosybrown, royalblue, rebeccapurple, saddlebrown, 
+salmon, sandybrown, seagreen, seashell, sienna, silver, skyblue, slateblue, 
+slategray, slategrey, snow, springgreen, steelblue, tan, teal, thistle, 
+tomato, turquoise, violet, wheat, white, whitesmoke, yellow, yellowgreen
