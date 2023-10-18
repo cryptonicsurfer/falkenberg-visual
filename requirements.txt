@@ -9,10 +9,8 @@ google-cloud-core
 google-cloud-bigquery
 google-api-python-client
 jsonschema
-jupyter
-jupyterlab
 matplotlib
 numpy
 requests
 sqlalchemy
-streamlit
+db-dtypes
