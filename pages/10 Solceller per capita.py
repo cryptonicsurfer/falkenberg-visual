@@ -142,4 +142,3 @@ fig3 = px.scatter(merged_df,
 
 st.plotly_chart(fig3)
 
-st.write(merged_df)
