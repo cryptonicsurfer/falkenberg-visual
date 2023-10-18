@@ -105,7 +105,7 @@ df_per_capita = df_per_capita.sort_values(by=['Område', 'Year'])
 energy_measure_title = str(df_per_capita['Energy Measure'].unique()[0])
 
 
-fig = px.line(df_per_capita, x = 'Year', y = 'Value', color='Område', title=energy_measure_title)
+fig = px.line(df_per_capita, x = 'Year', y = 'Value', color='Område', labels={'Value': 'Watt per invånare'}, title=energy_measure_title)
 
 st.plotly_chart(fig)
 
@@ -115,7 +115,7 @@ df_land_m2 = df_land_m2.sort_values(by=['Område', 'Year'])
 energy_measure_title = str(df_land_m2['Energy Measure'].unique()[0])
 
 
-fig2 = px.line(df_land_m2, x='Year', y='Value', color='Område', labels='Energy Measure', title=energy_measure_title)
+fig2 = px.line(df_land_m2, x='Year', y='Value', color='Område', labels={'Value':'Watt per kvadratkilometer'}, title=energy_measure_title)
 
 st.plotly_chart(fig2)
 
@@ -134,11 +134,14 @@ merged_df = pd.merge(df_land_m2_filtered, df_per_capita_filtered, on=['Område',
 fig3 = px.scatter(merged_df,
                   x='Value_land_m2',
                   y='Value_per_capita',
-                  labels={'x': 'Land M2 Value', 'y': 'Per Capita Value'},
+                #   labels={'x': 'Land M2 Value', 'y': 'Per Capita Value'},
                   size='Value_per_capita',
                   color='Område',
                   text='Område',
-                  title='Scatter Plott')
+                  title='Scatter Plott',
+                  labels={
+                      'Value_land_m2': 'Watt per kvadratkilometer',
+                      'Value_per_capita': 'Watt per invånare'
+                  })
 
 st.plotly_chart(fig3)
-
