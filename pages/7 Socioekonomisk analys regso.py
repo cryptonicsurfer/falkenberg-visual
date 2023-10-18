@@ -109,7 +109,7 @@ fig = px.scatter(df_filtered,
                  text='regsonamn',
                  labels={
                      'nettoinkomst_tkr': 'Nettoinkomst per år, KSEK',
-                     'andel_sjuk_och_stod_av_nettoinkomst': 'Andel av nettoinkomst från sjuk-, stöd- eller annan ersättning'
+                     'andel_sjuk_och_stod_av_nettoinkomst': 'Andel av nettoinkomst från sjuk-,\n stöd- eller annan ersättning'
                  })
 
 # Customize the background colors and gridlines
