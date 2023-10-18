@@ -58,10 +58,12 @@ fig2 = px.bar(
     color='verksamhetsomrade_namn',
     labels={'bruttokostnad_tkr': "Bruttokostnad tkr"},
     color_discrete_sequence=px.colors.sequential.Blues_r,
-    custom_data={'bruttokostnad_tkr': True, 'verksamhetsomrade_namn': True},
+    custom_data=['bruttokostnad_tkr', 'verksamhetsomrade_namn'],
     animation_frame='ar',  # animate by year
     category_orders={"ar": df['ar'].unique()}  # Ensure years play in order
 )
+
+
 summed_values = df.groupby(['aggregerad_niva', 'ar'])['bruttokostnad_tkr'].sum()
 y_max = summed_values.max()
 fig2.update_layout(
