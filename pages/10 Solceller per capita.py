@@ -145,3 +145,6 @@ fig3 = px.scatter(merged_df,
                   })
 
 st.plotly_chart(fig3)
+
+link = 'https://pxexternal.energimyndigheten.se/pxweb/sv/Nätanslutna%20solcellsanläggningar/-/EN0123_2.px/'
+st.write(f'källa: [energimyndigheten]({link}) statistikdatabas')
