@@ -69,25 +69,28 @@ BASE_YEAR = 2016
 # Extract data_entries from the response_data
 data_entries = response_data.get('data', [])
 
-# Creating a DataFrame
-df = pd.DataFrame(columns=['Year', 'Område', 'Energy Measure', 'Value'])
+# Creating a list to store the rows
+rows = []
 
-# Populate the DataFrame based on the response data
+# Populate the rows list based on the response data
 for entry in data_entries:
     year = BASE_YEAR + int(entry['key'][0])
     omrade = omrade_mapping.get(entry['key'][1], "Unknown Område")
     energy_measure = energy_measure_mapping.get(entry['key'][3], "Unknown Measure")
     value = float(entry['values'][0]) if entry['values'] else "No Value"
 
-     # Append the data into the DataFrame
-    df = df.append({
+    # Append the data into the rows list
+    rows.append({
         'Year': year,
         'Område': omrade,
         'Energy Measure': energy_measure,
         'Value': value
-    }, ignore_index=True)
+    })
 
-#convert 'Year' and 'Value' to int    
+# Convert the rows list to a DataFrame
+df = pd.DataFrame(rows)
+
+# Convert 'Year' and 'Value' to int    
 # Forward filling the missing values in the 'Year' column
 df['Year'] = df['Year'].fillna(method='ffill')
 df['Year'] = df['Year'].astype(int)
