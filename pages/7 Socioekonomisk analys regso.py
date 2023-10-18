@@ -106,7 +106,11 @@ fig = px.scatter(df_filtered,
                  color_continuous_scale='Agsunset',
                  template='plotly_dark',
                  size_max=35,
-                 text='regsonamn')
+                 text='regsonamn',
+                 labels={
+                     'nettoinkomst_tkr': 'Nettoinkomst per år, KSEK',
+                     'andel_sjuk_och_stod_av_nettoinkomst': 'Andel av nettoinkomst från sjuk-, stöd- eller annan ersättning'
+                 })
 
 # Customize the background colors and gridlines
 # fig.update_layout(
@@ -146,11 +150,13 @@ fig2.update_layout(
 )
 
 
-fig2.update_traces(marker=dict(opacity=0.5)) 
+fig2.update_traces(marker=dict(opacity=0.8)) 
 
-st.header('Nettoinkomst per område och kön')
+st.header('Nettoinkomst per område samt hur stor andel av områdets totala nettoinkomst som kommer från sjuk- eller annat stöd')
 
 st.plotly_chart(fig)
+
+st.header('Animerad graf över nettoinkomst uppdelat per område samt kön, animerat per år')
 
 st.plotly_chart(fig2)
 
