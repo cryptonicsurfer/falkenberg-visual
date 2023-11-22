@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import requests
 import plotly.express as px
+import base64
 
 # Function to fetch data
 @st.cache_data
@@ -57,13 +58,18 @@ def calculate_renewable_ratio(df):
     merged_df = merged_df.merge(fjarrvarme, on='year', how='left')
     merged_df.fillna(0, inplace=True)  # Fill NaN values with 0
 
-    # Calculate the renewable ratios
-    merged_df['renewable_ratio'] = (merged_df['total_value'] - merged_df['non_renewable_value']) / merged_df['total_value']
-    merged_df['renewable_excl_fjarrvarme_ratio'] = (merged_df['total_value'] - merged_df['non_renewable_value'] - merged_df['fjarrvarme_value']) / merged_df['total_value']
+    # Calculate the renewable ratios and convert them to percentages
+    merged_df['renewable_ratio'] = ((merged_df['total_value'] - merged_df['non_renewable_value']) / merged_df['total_value']) * 100
+    merged_df['renewable_excl_fjarrvarme_ratio'] = ((merged_df['total_value'] - merged_df['non_renewable_value'] - merged_df['fjarrvarme_value']) / merged_df['total_value']) * 100
 
     return merged_df[['year', 'renewable_ratio', 'renewable_excl_fjarrvarme_ratio']]
 
-
+    # Function to generate download link for a DataFrame
+    def generate_download_link(df, filename, text):
+        csv = df.to_csv(index=False)
+        b64 = base64.b64encode(csv.encode()).decode()  # some browsers need base64 encoding
+        href = f'<a href="data:file/csv;base64,{b64}" download="{filename}">{text}</a>'
+        return href
 
 # Streamlit app
 def main():
@@ -124,6 +130,13 @@ def main():
         "16": "el"
     }
 
+        # Function to generate download link for a DataFrame
+    def generate_download_link(df, filename, text):
+        csv = df.to_csv(index=False)
+        b64 = base64.b64encode(csv.encode()).decode()  # some browsers need base64 encoding
+        href = f'<a href="data:file/csv;base64,{b64}" download="{filename}">{text}</a>'
+        return href
+    
     # Fetch and map data
     raw_data = fetch_data(url, body)
     mapped_data = map_codes(raw_data['data'], code_to_description)
@@ -135,20 +148,33 @@ def main():
     merged_df = df.merge(renewable_ratio_df, on='year', how='left')
 
     # Plotting
-    fig = px.line(renewable_ratio_df, x='year', y='renewable_ratio', title='Andel fossilfri energi över tid')
+    fig = px.line(renewable_ratio_df, x='year', y='renewable_ratio', title='Andel fossilfri energi över tid', line_shape='hv',
+                labels={'renewable_ratio': 'Andel Fossilfri Energi (%)', 'year': 'År'})
+    fig.update_layout(xaxis_title='År', yaxis_title='Andel Fossilfri Energi (%)')
     st.plotly_chart(fig)
     st.caption('Beräknat som summan av fossilfria energikällor dividerat med den totala energikonsumtionen')
+    st.markdown(generate_download_link(renewable_ratio_df, "renewable_ratio_data.csv", 'Ladda ner data'), unsafe_allow_html=True)
+
 
     # Display the entire DataFrame
 
     # Reshape the DataFrame for plotting
     reshaped_df = pd.melt(renewable_ratio_df, id_vars=['year'], value_vars=['renewable_ratio', 'renewable_excl_fjarrvarme_ratio'], var_name='ratio_type', value_name='value')
 
-    # Plotting
-    fig2 = px.bar(reshaped_df, x='year', y='value', color='ratio_type', barmode='group', title='Andel fossilfri energi, och exklusive fjärrvärme')
-    st.plotly_chart(fig2)
+    # Custom labels for the bar chart
+    custom_labels = {'renewable_ratio': 'Fossilfri Energi', 'renewable_excl_fjarrvarme_ratio': 'Fossilfri Energi Exkl. Fjärrvärme', 'value': 'Andel (%)', 'year': 'År'}
 
-    st.write(merged_df)
+    # Plotting
+    fig2 = px.bar(reshaped_df, x='year', y='value', color='ratio_type', barmode='group', title='Andel fossilfri energi, och exklusive fjärrvärme',
+                labels=custom_labels)
+    fig2.update_layout(xaxis_title='År', yaxis_title='Andel (%)', legend_title='Energityp', yaxis=dict(range=[0, 100]))
+    st.plotly_chart(fig2)
+    st.markdown(generate_download_link(reshaped_df, "reshaped_data.csv", 'Ladda ner data som'), unsafe_allow_html=True)
+
+
+    
+    if st.button('Klicka är för att se källdatan'):
+        st.write(merged_df)
 
 if __name__ == "__main__":
     main()
