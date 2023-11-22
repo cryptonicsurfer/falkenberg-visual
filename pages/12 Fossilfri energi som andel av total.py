@@ -67,7 +67,7 @@ def calculate_renewable_ratio(df):
 
 # Streamlit app
 def main():
-    st.title("Andel ")
+    st.title("Andel fossilfri energi som ratio av total energikonsumtion")
 
     url = 'https://api.scb.se/OV0104/v1/doris/sv/ssd/START/EN/EN0203/EN0203A/SlutAnvSektor'
 
@@ -135,8 +135,9 @@ def main():
     merged_df = df.merge(renewable_ratio_df, on='year', how='left')
 
     # Plotting
-    fig = px.line(renewable_ratio_df, x='year', y='renewable_ratio', title='Renewable Energy Ratio Over Time')
+    fig = px.line(renewable_ratio_df, x='year', y='renewable_ratio', title='Andel fossilfri energi över tid')
     st.plotly_chart(fig)
+    st.caption('Beräknat som summan av fossilfria energikällor dividerat med den totala energikonsumtionen')
 
     # Display the entire DataFrame
 
@@ -144,7 +145,7 @@ def main():
     reshaped_df = pd.melt(renewable_ratio_df, id_vars=['year'], value_vars=['renewable_ratio', 'renewable_excl_fjarrvarme_ratio'], var_name='ratio_type', value_name='value')
 
     # Plotting
-    fig2 = px.bar(reshaped_df, x='year', y='value', color='ratio_type', barmode='group', title='Renewable Energy Ratios Over Time')
+    fig2 = px.bar(reshaped_df, x='year', y='value', color='ratio_type', barmode='group', title='Andel fossilfri energi, och exklusive fjärrvärme')
     st.plotly_chart(fig2)
 
     st.write(merged_df)
