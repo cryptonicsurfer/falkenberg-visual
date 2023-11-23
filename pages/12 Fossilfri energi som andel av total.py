@@ -11,12 +11,17 @@ def fetch_data(url, body):
     return response.json()
 
 # Function to map codes to descriptions
-def map_codes(data, code_map):
+def map_codes(data, code_map, renewable_sources):
     for item in data:
         for i, key in enumerate(item['key']):
             if key in code_map:
                 item['key'][i] = code_map[key]
+        # Check if the source is classified as renewable
+        item['is_renewable'] = item['key'][1] in renewable_sources
     return data
+
+renewable_sources = ['flytande (förnybara)', 'fast (förnybara)', 'gas (förnybara)', 'fjärrvärme', 'el']
+
 
 # Function to create dataframe
 def create_dataframe(data):
@@ -28,48 +33,36 @@ def create_dataframe(data):
         except ValueError:
             value = 0  # or use `float('nan')` if you prefer NaN
 
-        # Determine if the source is renewable or non-renewable
-        is_renewable = 'förnybara' in item['key'][1] and 'icke' not in item['key'][1]
-
         record = {
             'region': item['key'][0],
             'energy_type': item['key'][1],
             'year': item['key'][2],
             'value': value,
-            'is_renewable': is_renewable
+            'is_renewable': item['is_renewable']  # Use the is_renewable flag from map_codes
         }
         records.append(record)
     return pd.DataFrame(records)
 
-
 # Function to calculate the renewable ratio
 def calculate_renewable_ratio(df):
-    # Sum total energy consumption by year
-    total_by_year = df.groupby('year')['value'].sum().reset_index(name='total_value')
-
-    # Sum non-renewable energy consumption by year
-    non_renewable = df[df['energy_type'].str.contains("icke förnybara")].groupby('year')['value'].sum().reset_index(name='non_renewable_value')
-
-    # Sum fjärrvärme energy consumption by year
-    fjarrvarme = df[df['energy_type'] == "fjärrvärme"].groupby('year')['value'].sum().reset_index(name='fjarrvarme_value')
-
-    # Merge total, non-renewable, and fjärrvärme data
-    merged_df = total_by_year.merge(non_renewable, on='year', how='left')
-    merged_df = merged_df.merge(fjarrvarme, on='year', how='left')
-    merged_df.fillna(0, inplace=True)  # Fill NaN values with 0
+    # Calculate the total value, non-renewable value, and fjärrvärme value for each year
+    yearly_data = df.groupby('year').agg({'value': 'sum', 'is_renewable': lambda x: (x == True).sum()})
+    non_renewable_data = df[~df['is_renewable']].groupby('year')['value'].sum()
+    fjarrvarme_data = df[df['energy_type'] == "fjärrvärme"].groupby('year')['value'].sum()
 
     # Calculate the renewable ratios and convert them to percentages
-    merged_df['renewable_ratio'] = ((merged_df['total_value'] - merged_df['non_renewable_value']) / merged_df['total_value']) * 100
-    merged_df['renewable_excl_fjarrvarme_ratio'] = ((merged_df['total_value'] - merged_df['non_renewable_value'] - merged_df['fjarrvarme_value']) / merged_df['total_value']) * 100
+    yearly_data['renewable_ratio'] = (1 - non_renewable_data / yearly_data['value']) * 100
+    yearly_data['renewable_excl_fjarrvarme_ratio'] = (1 - (non_renewable_data + fjarrvarme_data) / yearly_data['value']) * 100
 
-    return merged_df[['year', 'renewable_ratio', 'renewable_excl_fjarrvarme_ratio']]
+    return yearly_data.reset_index()[['year', 'renewable_ratio', 'renewable_excl_fjarrvarme_ratio']]
 
-    # Function to generate download link for a DataFrame
-    def generate_download_link(df, filename, text):
-        csv = df.to_csv(index=False)
-        b64 = base64.b64encode(csv.encode()).decode()  # some browsers need base64 encoding
-        href = f'<a href="data:file/csv;base64,{b64}" download="{filename}">{text}</a>'
-        return href
+
+# Function to generate download link for a DataFrame
+def generate_download_link(df, filename, text):
+    csv = df.to_csv(index=False)
+    b64 = base64.b64encode(csv.encode()).decode()  # some browsers need base64 encoding
+    href = f'<a href="data:file/csv;base64,{b64}" download="{filename}">{text}</a>'
+    return href
 
 # Streamlit app
 def main():
@@ -139,10 +132,11 @@ def main():
     
     # Fetch and map data
     raw_data = fetch_data(url, body)
-    mapped_data = map_codes(raw_data['data'], code_to_description)
+    mapped_data = map_codes(raw_data['data'], code_to_description, renewable_sources)
 
     df = create_dataframe(mapped_data)
     renewable_ratio_df = calculate_renewable_ratio(df)
+
 
     # Merge the renewable ratio into the main DataFrame
     merged_df = df.merge(renewable_ratio_df, on='year', how='left')
@@ -165,8 +159,13 @@ def main():
     custom_labels = {'renewable_ratio': 'Fossilfri Energi', 'renewable_excl_fjarrvarme_ratio': 'Fossilfri Energi Exkl. Fjärrvärme', 'value': 'Andel (%)', 'year': 'År'}
 
     # Plotting
-    fig2 = px.bar(reshaped_df, x='year', y='value', color='ratio_type', barmode='group', title='Andel fossilfri energi, och exklusive fjärrvärme',
-                labels=custom_labels)
+    fig2 = px.bar(reshaped_df, x='year', 
+                  y='value', 
+                  color='ratio_type', 
+                  barmode='group', 
+                  title='Andel fossilfri energi, och exklusive fjärrvärme',
+                  labels=custom_labels)
+    
     fig2.update_layout(xaxis_title='År', yaxis_title='Andel (%)', legend_title='Energityp', yaxis=dict(range=[0, 100]))
     st.plotly_chart(fig2)
     st.markdown(generate_download_link(reshaped_df, "reshaped_data.csv", 'Ladda ner data som'), unsafe_allow_html=True)
