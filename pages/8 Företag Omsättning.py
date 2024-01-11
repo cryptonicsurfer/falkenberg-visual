@@ -152,11 +152,12 @@ most_recent_year = sector_filtered_df['bokslutsar'].max()
 sector_filtered_df = sector_filtered_df[~((sector_filtered_df['bokslutsar'] == most_recent_year) & (sector_filtered_df['anstallda'] == 0))]
 
 # Group by 'bransch_grov' and 'bokslutsar', sum 'omsattning', 'totalt_kapital', and 'anstallda'
-sector_yearly_summary = sector_filtered_df.groupby(['bransch_grov', 'bokslutsar']).agg({'omsattning': 'sum', 'totalt_kapital': 'sum', 'anstallda': 'sum'}).reset_index()
+sector_yearly_summary = sector_filtered_df.groupby(['bransch_grov', 'bokslutsar']).agg({'omsattning': 'sum', 'totalt_kapital': 'sum', 'anstallda': 'sum', 'eget_kapital': 'sum'}).reset_index()
 
 # Calculate 'omsattning_per_anstalld' and 'totalt_kapital_per_anstalld'
 sector_yearly_summary['omsattning_per_anstalld'] = sector_yearly_summary['omsattning'] / sector_yearly_summary['anstallda']
 sector_yearly_summary['totalt_kapital_per_anstalld'] = sector_yearly_summary['totalt_kapital'] / sector_yearly_summary['anstallda']
+sector_yearly_summary['eget_kapital_per_anstalld'] =sector_yearly_summary['eget_kapital'] / sector_yearly_summary['anstallda']
 
 # Convert 'omsattning_per_anstalld' to a list for the 'size' argument in scatter plot
 size_values = sector_yearly_summary['omsattning_per_anstalld'].tolist()
@@ -187,3 +188,19 @@ fig_scatter = px.scatter(
     labels={'totalt_kapital_per_anstalld': 'Totalt Kapital per Anställd', 'omsattning_per_anstalld': 'Omsättning per Anställd'}
 )
 st.write(fig_scatter)
+
+# Scatter plot for capital per employee vs revenue per employee
+fig_scatter2 = px.scatter(
+    sector_yearly_summary,
+    x='totalt_kapital_per_anstalld',
+    y='eget_kapital_per_anstalld',
+    animation_frame='bokslutsar',
+    color='bransch_grov',
+    size=size_values,
+    range_x=[0, sector_yearly_summary['totalt_kapital_per_anstalld'].max()+1000],
+    range_y=[0, sector_yearly_summary['eget_kapital_per_anstalld'].max()+1000],
+
+    title='Totalt Kapital per Anställd vs Omsättning per Anställd per Bransch och År',
+    labels={'totalt_kapital_per_anstalld': 'Totalt Kapital per Anställd', 'omsattning_per_anstalld': 'Omsättning per Anställd', 'eget_kapital_per_anstalld': 'Egetkapital per anställd'}
+)
+st.write(fig_scatter2)

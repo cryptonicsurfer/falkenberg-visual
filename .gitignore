@@ -57,5 +57,6 @@ ENV/
 
 # Streamlit related
 .streamlit/secrets.toml
-update_bigQuery/.streamlit/
+update_bigQuery/.streamlit/secrets.toml
+pages/.streamlit/secrets.toml
 
