@@ -144,3 +144,46 @@ fig_anstallda.update_traces(texttemplate='%{text:,.0f}', textposition='inside') 
 st.write(fig_omsattning)
 
 st.write(fig_anstallda)
+
+# Rename to avoid conflicts with other filtered_df
+sector_filtered_df = df[~df['bransch_grov'].isin(['Okänd', 'Finans och fastighetsverksamhet'])]
+# sector_filtered_df = df[df['bransch_grov'] != 'Okänd']
+most_recent_year = sector_filtered_df['bokslutsar'].max()
+sector_filtered_df = sector_filtered_df[~((sector_filtered_df['bokslutsar'] == most_recent_year) & (sector_filtered_df['anstallda'] == 0))]
+
+# Group by 'bransch_grov' and 'bokslutsar', sum 'omsattning', 'totalt_kapital', and 'anstallda'
+sector_yearly_summary = sector_filtered_df.groupby(['bransch_grov', 'bokslutsar']).agg({'omsattning': 'sum', 'totalt_kapital': 'sum', 'anstallda': 'sum'}).reset_index()
+
+# Calculate 'omsattning_per_anstalld' and 'totalt_kapital_per_anstalld'
+sector_yearly_summary['omsattning_per_anstalld'] = sector_yearly_summary['omsattning'] / sector_yearly_summary['anstallda']
+sector_yearly_summary['totalt_kapital_per_anstalld'] = sector_yearly_summary['totalt_kapital'] / sector_yearly_summary['anstallda']
+
+# Convert 'omsattning_per_anstalld' to a list for the 'size' argument in scatter plot
+size_values = sector_yearly_summary['omsattning_per_anstalld'].tolist()
+
+# Line chart for average revenue per employee
+fig_avg_rev_per_emp = px.line(
+    sector_yearly_summary,
+    x='bokslutsar',
+    y='omsattning_per_anstalld',
+    color='bransch_grov',
+    title='Genomsnittlig Omsättning per Anställd per Bransch Årligen',
+    labels={'omsattning_per_anstalld': 'Omsättning per Anställd', 'bokslutsar': 'År', 'bransch_grov': 'Bransch'}
+)
+st.write(fig_avg_rev_per_emp)
+
+# Scatter plot for capital per employee vs revenue per employee
+fig_scatter = px.scatter(
+    sector_yearly_summary,
+    x='totalt_kapital_per_anstalld',
+    y='omsattning_per_anstalld',
+    animation_frame='bokslutsar',
+    color='bransch_grov',
+    size=size_values,
+    range_x=[0, sector_yearly_summary['totalt_kapital_per_anstalld'].max()+1000],
+    range_y=[0, sector_yearly_summary['omsattning_per_anstalld'].max()+1000],
+
+    title='Totalt Kapital per Anställd vs Omsättning per Anställd per Bransch och År',
+    labels={'totalt_kapital_per_anstalld': 'Totalt Kapital per Anställd', 'omsattning_per_anstalld': 'Omsättning per Anställd'}
+)
+st.write(fig_scatter)
